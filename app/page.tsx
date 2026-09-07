@@ -14,6 +14,7 @@ import InquiryPopup from "../components/quick-contact/InquiryPopup";
 import BlogSection from "../components/blog/BlogSection";
 import QuickContact from "../components/quick-contact/QuickContact";
 import PackagesSection from "@/components/packages/PackagesSection";
+import MomentsSection from "@/components/moments/MomentsSection";
 
 import {
   ArrowRight,
@@ -823,7 +824,7 @@ export default function Home() {
           onInquiry={handlePackageInquiry}
         />
 
-
+        <MomentsSection />
         {/* =====================================================
             DESTINATION CAROUSEL
         ===================================================== */}
