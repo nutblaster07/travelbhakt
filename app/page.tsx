@@ -7,6 +7,7 @@ import Footer from "../components/layout/Footer";
 import InquiryForm from "../components/inquiry/InquiryForm";
 import BlogSection from "../components/blog/BlogSection";
 import QuickContact from "../components/quick-contact/QuickContact";
+import PackagesSection from "@/components/packages/PackagesSection";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -357,6 +358,7 @@ export default function Home() {
       </section>
       <DestinationCarousel />
       <ExperienceSection />
+      <PackagesSection />
       <FeaturedGuide />
       <HiddenGems />
       <BlogSection />
