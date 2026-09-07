@@ -23,3 +23,21 @@ button,
 input {
   font: inherit;
 }
+@keyframes popularDestinationScroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.popular-destination-track {
+  animation: popularDestinationScroll 35s linear infinite;
+  will-change: transform;
+}
+
+.popular-destination-track:hover {
+  animation-play-state: paused;
+}
