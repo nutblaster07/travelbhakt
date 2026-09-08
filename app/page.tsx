@@ -101,6 +101,193 @@ const features = [
     description: "Real People",
   },
 ];
+const mostPopularPackages = [
+  {
+    title: "Amazing Sikkim Tour",
+    slug: "amazing-sikkim-tour",
+    destination: "Sikkim",
+    duration: "5 Days / 4 Nights",
+    price: "₹24,999",
+    description:
+      "Explore Gangtok, Tsomgo Lake and the beautiful mountains of Sikkim.",
+    image:
+      "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=85",
+  },
+  {
+    title: "Magical Meghalaya",
+    slug: "magical-meghalaya",
+    destination: "Meghalaya",
+    duration: "6 Days / 5 Nights",
+    price: "₹28,999",
+    description:
+      "Discover waterfalls, living root bridges and the green beauty of Meghalaya.",
+    image:
+      "https://images.unsplash.com/photo-1593181629936-11c609b8db9b?auto=format&fit=crop&w=1200&q=85",
+  },
+  {
+    title: "Tawang Explorer",
+    slug: "tawang-explorer",
+    destination: "Arunachal Pradesh",
+    duration: "5 Days / 4 Nights",
+    price: "₹26,999",
+    description:
+      "Experience monasteries, Himalayan mountains and the peaceful beauty of Tawang.",
+    image:
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=85",
+  },
+  {
+    title: "Assam Discovery",
+    slug: "assam-discovery",
+    destination: "Assam",
+    duration: "5 Days / 4 Nights",
+    price: "₹22,999",
+    description:
+      "Discover tea gardens, wildlife, culture and the beauty of the Brahmaputra.",
+    image:
+      "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=1200&q=85",
+  },
+];
+
+const holidayPackages = [
+  {
+    title: "Kashmir Holiday Escape",
+    slug: "kashmir-holiday-escape",
+    destination: "Kashmir",
+    duration: "6 Days / 5 Nights",
+    price: "₹32,999",
+    description:
+      "Enjoy beautiful valleys, lakes, gardens and breathtaking Himalayan views.",
+    image:
+      "https://images.unsplash.com/photo-1598091383021-15ddea10925d?auto=format&fit=crop&w=1200&q=85",
+  },
+  {
+    title: "Kerala Backwater Escape",
+    slug: "kerala-backwater-escape",
+    destination: "Kerala",
+    duration: "5 Days / 4 Nights",
+    price: "₹27,999",
+    description:
+      "Relax among peaceful backwaters, beaches and lush tropical landscapes.",
+    image:
+      "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=85",
+  },
+  {
+    title: "Royal Rajasthan",
+    slug: "royal-rajasthan",
+    destination: "Rajasthan",
+    duration: "7 Days / 6 Nights",
+    price: "₹34,999",
+    description:
+      "Explore royal palaces, colourful cities, forts and the golden desert.",
+    image:
+      "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1200&q=85",
+  },
+  {
+    title: "Goa Beach Holiday",
+    slug: "goa-beach-holiday",
+    destination: "Goa",
+    duration: "4 Days / 3 Nights",
+    price: "₹19,999",
+    description:
+      "A relaxing beach holiday with beautiful sunsets, food and coastal experiences.",
+    image:
+      "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1200&q=85",
+  },
+];
+
+const weekendTrips = [
+  {
+    title: "Darjeeling Weekend Escape",
+    slug: "darjeeling-weekend-escape",
+    destination: "Darjeeling",
+    duration: "3 Days / 2 Nights",
+    price: "₹12,999",
+    description:
+      "A refreshing mountain escape with tea gardens and Himalayan views.",
+    image:
+      "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=85",
+  },
+  {
+    title: "Gangtok Getaway",
+    slug: "gangtok-getaway",
+    destination: "Gangtok",
+    duration: "3 Days / 2 Nights",
+    price: "₹14,999",
+    description:
+      "A quick journey into the mountains with beautiful roads and peaceful views.",
+    image:
+      "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=85",
+  },
+  {
+    title: "Shillong Weekend",
+    slug: "shillong-weekend",
+    destination: "Shillong",
+    duration: "3 Days / 2 Nights",
+    price: "₹13,999",
+    description:
+      "Escape to the hills, waterfalls and beautiful landscapes of Meghalaya.",
+    image:
+      "https://images.unsplash.com/photo-1593181629936-11c609b8db9b?auto=format&fit=crop&w=1200&q=85",
+  },
+  {
+    title: "Kaziranga Weekend Safari",
+    slug: "kaziranga-weekend-safari",
+    destination: "Assam",
+    duration: "3 Days / 2 Nights",
+    price: "₹15,999",
+    description:
+      "Experience wildlife and the natural beauty of Assam on a short escape.",
+    image:
+      "https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=85",
+  },
+];
+
+const adventurePackages = [
+  {
+    title: "Spiti Valley Adventure",
+    slug: "spiti-valley-adventure",
+    destination: "Himachal Pradesh",
+    duration: "7 Days / 6 Nights",
+    price: "₹35,999",
+    description:
+      "Explore dramatic mountains, high-altitude villages and unforgettable roads.",
+    image:
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=85",
+  },
+  {
+    title: "Ladakh Expedition",
+    slug: "ladakh-expedition",
+    destination: "Ladakh",
+    duration: "8 Days / 7 Nights",
+    price: "₹42,999",
+    description:
+      "Experience high mountain passes, lakes and one of India's greatest road journeys.",
+    image:
+      "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=85",
+  },
+  {
+    title: "Arunachal Road Adventure",
+    slug: "arunachal-road-adventure",
+    destination: "Arunachal Pradesh",
+    duration: "8 Days / 7 Nights",
+    price: "₹38,999",
+    description:
+      "Travel through remote Himalayan roads, monasteries and spectacular valleys.",
+    image:
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=85",
+  },
+  {
+    title: "Northeast Explorer",
+    slug: "northeast-explorer",
+    destination: "Northeast India",
+    duration: "9 Days / 8 Nights",
+    price: "₹45,999",
+    description:
+      "An adventurous journey through mountains, forests, waterfalls and local cultures.",
+    image:
+      "https://images.unsplash.com/photo-1593181629936-11c609b8db9b?auto=format&fit=crop&w=1200&q=85",
+  },
+];
 
 export default function Home() {
   /* ================= MOBILE MENU ================= */
@@ -820,9 +1007,45 @@ export default function Home() {
             PACKAGES
         ===================================================== */}
 
-        <PackagesSection
-          onInquiry={handlePackageInquiry}
-        />
+        {/* ================= MOST POPULAR PACKAGES ================= */}
+
+<PackagesSection
+  eyebrow="Traveller Favorites"
+  title="Most Popular Packages"
+  description="Discover the journeys our travellers love and choose your next unforgettable experience."
+  packages={mostPopularPackages}
+  viewAllHref="/packages"
+/>
+
+{/* ================= HOLIDAY PACKAGES ================= */}
+
+<PackagesSection
+  eyebrow="Plan Your Escape"
+  title="Holiday Packages"
+  description="Beautiful destinations and thoughtfully planned holidays for your next memorable journey."
+  packages={holidayPackages}
+  viewAllHref="/packages?category=holiday"
+/>
+
+{/* ================= WEEKEND TRIPS ================= */}
+
+<PackagesSection
+  eyebrow="Short Escapes"
+  title="Weekend Trips"
+  description="Quick and refreshing getaways when you need a break from everyday life."
+  packages={weekendTrips}
+  viewAllHref="/packages?category=weekend"
+/>
+
+{/* ================= ADVENTURE TOURS ================= */}
+
+<PackagesSection
+  eyebrow="Explore Beyond"
+  title="Adventure Tours"
+  description="For travellers looking for mountains, roads, wilderness and unforgettable experiences."
+  packages={adventurePackages}
+  viewAllHref="/packages?category=adventure"
+/>
 
         <MomentsSection />
         {/* =====================================================
