@@ -1,145 +1,375 @@
+"use client";
+
 import Link from "next/link";
-import { ArrowLeft, Clock } from "lucide-react";
+import {
+  ArrowLeft,
+  Calendar,
+  Clock,
+  FileText,
+  Loader2,
+} from "lucide-react";
+import {
+  useEffect,
+  useState,
+} from "react";
+import { useParams } from "next/navigation";
 
-const blogs: Record<
-  string,
-  {
-    title: string;
-    category: string;
-    readTime: string;
-    description: string;
-    image: string;
-    content: string[];
+type Blog = {
+  id: number;
+  title: string;
+  slug: string;
+  category: string | null;
+  content: string;
+  excerpt: string | null;
+  coverImage: string | null;
+  isPublished: boolean;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export default function BlogDetailsPage() {
+  const params = useParams();
+
+  const slug = params.slug as string;
+
+  const [blog, setBlog] =
+    useState<Blog | null>(null);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [error, setError] =
+    useState("");
+
+  useEffect(() => {
+    if (!slug) return;
+
+    const fetchBlog = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        /*
+        ==========================================
+        GET ALL BLOGS
+        ==========================================
+        */
+
+        const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/blogs`
+       );
+
+        if (!response.ok) {
+          throw new Error(
+            "Failed to load blog"
+          );
+        }
+
+        const blogs: Blog[] =
+          await response.json();
+
+        /*
+        ==========================================
+        FIND BLOG USING SLUG
+        ==========================================
+        */
+
+        const selectedBlog =
+          blogs.find(
+            (blog) =>
+              blog.slug === slug
+          );
+
+        if (!selectedBlog) {
+          throw new Error(
+            "Blog not found"
+          );
+        }
+
+        setBlog(selectedBlog);
+      } catch (error) {
+        console.error(error);
+
+        setError(
+          "The blog you are looking for could not be found."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlog();
+  }, [slug]);
+
+  /*
+  ==========================================
+  READ TIME
+  ==========================================
+  */
+
+  function getReadTime(
+    content: string
+  ) {
+    const words =
+      content
+        .trim()
+        .split(/\s+/)
+        .length;
+
+    const minutes =
+      Math.max(
+        1,
+        Math.ceil(words / 200)
+      );
+
+    return `${minutes} min read`;
   }
-> = {
-  "7-places-in-northeast-india": {
-    title: "7 Places in Northeast India That Don't Feel Real",
-    category: "Northeast India",
-    readTime: "6 min read",
-    description:
-      "From living root bridges to Himalayan monasteries, discover places that make Northeast India feel like another world.",
-    image:
-      "https://images.unsplash.com/photo-1593181629936-11c609b8db9b?auto=format&fit=crop&w=1600&q=85",
-    content: [
-      "Northeast India is one of the most diverse and beautiful regions of the country. Mountains, forests, rivers and unique cultures make every journey feel different.",
-      "From Meghalaya's green landscapes to the monasteries of Arunachal Pradesh, the region offers experiences that cannot easily be found anywhere else.",
-      "Take your time, travel slowly and allow the journey itself to become part of the experience.",
-    ],
-  },
 
-  "complete-guide-to-tawang": {
-    title: "A Complete Guide to Tawang",
-    category: "Travel Guide",
-    readTime: "8 min read",
-    description:
-      "Everything you need to know before planning your journey to the mountains of Tawang.",
-    image:
-      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=85",
-    content: [
-      "Tawang is a mountain destination known for its dramatic landscapes, monasteries and peaceful atmosphere.",
-      "The journey to Tawang is an adventure itself, taking travellers through winding Himalayan roads and spectacular mountain scenery.",
-      "Plan your journey carefully and give yourself enough time to experience the destination at a slower pace.",
-    ],
-  },
+  /*
+  ==========================================
+  FORMAT DATE
+  ==========================================
+  */
 
-  "best-time-to-visit-meghalaya": {
-    title: "Best Time to Visit Meghalaya",
-    category: "Travel Tips",
-    readTime: "5 min read",
-    description:
-      "Plan your Meghalaya trip at the right time and experience its waterfalls, clouds and green landscapes.",
-    image:
-      "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1600&q=85",
-    content: [
-      "Meghalaya changes character throughout the year, from dramatic monsoon landscapes to clearer skies during the cooler months.",
-      "The best time for your trip depends on whether you want to experience waterfalls at their strongest or prefer easier sightseeing and outdoor travel.",
-      "Planning according to the season can completely change your travel experience.",
-    ],
-  },
-};
-
-type PageProps = {
-  params: Promise<{
-    slug: string;
-  }>;
-};
-
-export default async function BlogArticlePage({ params }: PageProps) {
-  const { slug } = await params;
-
-  const blog = blogs[slug];
-
-  if (!blog) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-[#f7f3ed] px-6">
-        <div className="text-center">
-          <h1 className="font-serif text-5xl text-[#211c17]">
-            Article Not Found
-          </h1>
-
-          <Link
-            href="/blog"
-            className="mt-8 inline-flex rounded-full bg-[#c85a2b] px-6 py-3 text-white"
-          >
-            Back to Blog
-          </Link>
-        </div>
-      </main>
+  function formatDate(
+    date: string
+  ) {
+    return new Date(
+      date
+    ).toLocaleDateString(
+      "en-IN",
+      {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }
     );
   }
 
-  return (
-    <main className="min-h-screen bg-[#f7f3ed] text-[#211c17]">
-      {/* Hero */}
+  /*
+  ==========================================
+  LOADING
+  ==========================================
+  */
 
-      <section className="relative h-[75vh] min-h-[600px] overflow-hidden">
-        <img
-          src={blog.image}
-          alt={blog.title}
-          className="absolute inset-0 h-full w-full object-cover"
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#f7f3ed]">
+
+        <Loader2
+          size={32}
+          className="animate-spin text-[#c85a2b]"
         />
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/20" />
+      </div>
+    );
+  }
 
-        <Link
-          href="/blog"
-          className="absolute left-6 top-8 z-10 inline-flex items-center gap-2 rounded-full bg-white/15 px-5 py-3 text-sm text-white backdrop-blur-md hover:bg-white hover:text-[#211c17] lg:left-12"
-        >
-          <ArrowLeft size={18} />
-          Back to Stories
-        </Link>
+  /*
+  ==========================================
+  ERROR / NOT FOUND
+  ==========================================
+  */
 
-        <div className="absolute bottom-0 left-0 right-0 px-6 pb-16 text-white lg:px-12">
-          <div className="mx-auto max-w-[1000px]">
-            <p className="text-sm font-bold uppercase tracking-[0.3em] text-[#f08b5d]">
-              {blog.category}
-            </p>
+  if (error || !blog) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#f7f3ed] px-6">
 
-            <h1 className="mt-5 font-serif text-5xl leading-tight sm:text-6xl lg:text-7xl">
-              {blog.title}
-            </h1>
+        <div className="max-w-md rounded-[32px] bg-white p-10 text-center shadow-sm">
 
-            <div className="mt-6 flex items-center gap-2 text-sm text-white/70">
-              <Clock size={16} />
-              {blog.readTime}
-            </div>
-          </div>
+          <FileText
+            size={40}
+            className="mx-auto text-[#c85a2b]"
+          />
+
+          <h1 className="mt-6 font-serif text-3xl text-[#211c17]">
+            Blog Not Found
+          </h1>
+
+          <p className="mt-3 text-[#756b63]">
+            {error}
+          </p>
+
+          <Link
+            href="/blog"
+            className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#211c17] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#c85a2b]"
+          >
+            <ArrowLeft size={17} />
+
+            Back to Blogs
+          </Link>
+
         </div>
+
+      </div>
+    );
+  }
+
+  /*
+  ==========================================
+  BLOG PAGE
+  ==========================================
+  */
+
+  return (
+    <main className="min-h-screen bg-[#f7f3ed]">
+
+      {/* =====================================
+          HERO IMAGE
+      ===================================== */}
+
+      <section className="px-6 pt-10 lg:px-12 lg:pt-16">
+
+        <div className="mx-auto max-w-[1100px]">
+
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#756b63] transition hover:text-[#c85a2b]"
+          >
+            <ArrowLeft size={17} />
+
+            Back to Stories
+          </Link>
+
+          {/* Category */}
+
+          {blog.category && (
+            <p className="mt-12 text-xs font-bold uppercase tracking-[0.3em] text-[#c85a2b]">
+
+              {blog.category}
+
+            </p>
+          )}
+
+          {/* Title */}
+
+          <h1 className="mt-5 max-w-4xl font-serif text-4xl leading-tight text-[#211c17] sm:text-5xl lg:text-7xl">
+
+            {blog.title}
+
+          </h1>
+
+          {/* Excerpt */}
+
+          {blog.excerpt && (
+            <p className="mt-7 max-w-3xl text-lg leading-relaxed text-[#756b63] lg:text-xl">
+
+              {blog.excerpt}
+
+            </p>
+          )}
+
+          {/* Meta */}
+
+          <div className="mt-8 flex flex-wrap items-center gap-6 text-sm text-[#756b63]">
+
+            <div className="flex items-center gap-2">
+
+              <Calendar size={17} />
+
+              {formatDate(
+                blog.createdAt
+              )}
+
+            </div>
+
+            <div className="flex items-center gap-2">
+
+              <Clock size={17} />
+
+              {getReadTime(
+                blog.content
+              )}
+
+            </div>
+
+          </div>
+
+        </div>
+
       </section>
 
-      {/* Article */}
+      {/* =====================================
+          COVER IMAGE
+      ===================================== */}
 
-      <article className="mx-auto max-w-3xl px-6 py-20">
-        <p className="text-xl leading-relaxed text-[#756b63]">
-          {blog.description}
-        </p>
+      {blog.coverImage && (
+        <section className="px-6 pt-12 lg:px-12">
 
-        <div className="mt-12 space-y-8 text-lg leading-relaxed text-[#4f4740]">
-          {blog.content.map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
+          <div className="mx-auto max-w-[1200px] overflow-hidden rounded-[32px]">
+
+            <img
+              src={
+                blog.coverImage
+              }
+              alt={
+                blog.title
+              }
+              className="h-[300px] w-full object-cover sm:h-[450px] lg:h-[600px]"
+            />
+
+          </div>
+
+        </section>
+      )}
+
+      {/* =====================================
+          ARTICLE
+      ===================================== */}
+
+      <article className="px-6 py-16 lg:px-12 lg:py-24">
+
+        <div className="mx-auto max-w-3xl">
+
+          <div className="whitespace-pre-line text-base leading-8 text-[#4f4842] sm:text-lg">
+
+            {blog.content}
+
+          </div>
+
         </div>
+
       </article>
+
+      {/* =====================================
+          BACK SECTION
+      ===================================== */}
+
+      <section className="border-t border-[#211c17]/10 px-6 py-16 lg:px-12">
+
+        <div className="mx-auto max-w-3xl text-center">
+
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#c85a2b]">
+
+            Travel Stories
+
+          </p>
+
+          <h2 className="mt-4 font-serif text-3xl text-[#211c17]">
+
+            Discover more stories
+
+          </h2>
+
+          <Link
+            href="/blog"
+            className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#211c17] px-7 py-4 font-semibold text-white transition hover:bg-[#c85a2b]"
+          >
+            View All Stories
+
+            <ArrowLeft
+              size={17}
+              className="rotate-180"
+            />
+
+          </Link>
+
+        </div>
+
+      </section>
+
     </main>
   );
 }

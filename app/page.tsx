@@ -15,6 +15,7 @@ import BlogSection from "../components/blog/BlogSection";
 import QuickContact from "../components/quick-contact/QuickContact";
 import PackagesSection from "@/components/packages/PackagesSection";
 import MomentsSection from "@/components/moments/MomentsSection";
+import PackageSection from "@/components/packages/PackageSection";
 
 import {
   ArrowRight,
@@ -1009,44 +1010,7 @@ export default function Home() {
 
         {/* ================= MOST POPULAR PACKAGES ================= */}
 
-<PackagesSection
-  eyebrow="Traveller Favorites"
-  title="Most Popular Packages"
-  description="Discover the journeys our travellers love and choose your next unforgettable experience."
-  packages={mostPopularPackages}
-  viewAllHref="/packages"
-/>
-
-{/* ================= HOLIDAY PACKAGES ================= */}
-
-<PackagesSection
-  eyebrow="Plan Your Escape"
-  title="Holiday Packages"
-  description="Beautiful destinations and thoughtfully planned holidays for your next memorable journey."
-  packages={holidayPackages}
-  viewAllHref="/packages?category=holiday"
-/>
-
-{/* ================= WEEKEND TRIPS ================= */}
-
-<PackagesSection
-  eyebrow="Short Escapes"
-  title="Weekend Trips"
-  description="Quick and refreshing getaways when you need a break from everyday life."
-  packages={weekendTrips}
-  viewAllHref="/packages?category=weekend"
-/>
-
-{/* ================= ADVENTURE TOURS ================= */}
-
-<PackagesSection
-  eyebrow="Explore Beyond"
-  title="Adventure Tours"
-  description="For travellers looking for mountains, roads, wilderness and unforgettable experiences."
-  packages={adventurePackages}
-  viewAllHref="/packages?category=adventure"
-/>
-
+<PackagesSection />
         <MomentsSection />
         {/* =====================================================
             DESTINATION CAROUSEL

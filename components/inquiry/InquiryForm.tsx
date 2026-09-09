@@ -5,6 +5,7 @@ import { Send, CheckCircle2 } from "lucide-react";
 
 type DestinationInquiryFormProps = {
   destinationName?: string;
+  packageId?: number | null;
   allowDestinationEdit?: boolean;
 };
 
@@ -20,9 +21,12 @@ type FormData = {
 
 export default function InquiryForm({
   destinationName = "",
+  packageId = null,
   allowDestinationEdit = false,
-}: DestinationInquiryFormProps)  {
+}: DestinationInquiryFormProps) {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -34,7 +38,7 @@ export default function InquiryForm({
     message: "",
   });
 
-  // Update destination when the page provides a different destination
+  // Update destination when page provides a destination
   useEffect(() => {
     setFormData((previousData) => ({
       ...previousData,
@@ -55,14 +59,67 @@ export default function InquiryForm({
     }));
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+ async function handleSubmit(
+  e: React.FormEvent<HTMLFormElement>
+) {
+  e.preventDefault();
 
-    console.log("Inquiry Data:", formData);
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/inquiries`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email || null,
+          phone: formData.phone,
+          destination: formData.destination || null,
+          packageId: packageId,
+          travelDate:
+            formData.travelDate || null,
+          travellers: formData.travellers
+            ? Number(formData.travellers)
+            : null,
+          message: formData.message || null,
+        }),
+      }
+    );
 
-    // Later we will send formData to Spring Boot
+    if (!response.ok) {
+      throw new Error(
+        "Failed to submit inquiry"
+      );
+    }
 
     setSubmitted(true);
+  } catch (error) {
+    console.error(
+      "Error submitting inquiry:",
+      error
+    );
+
+    alert(
+      "Something went wrong. Please try again."
+    );
+  }
+}
+
+  function handleSendAnotherInquiry() {
+    setSubmitted(false);
+    setError("");
+
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      destination: destinationName || "",
+      travelDate: "",
+      travellers: "",
+      message: "",
+    });
   }
 
   return (
@@ -72,6 +129,7 @@ export default function InquiryForm({
     >
       <div className="mx-auto grid max-w-[1200px] gap-12 lg:grid-cols-2">
         {/* Left Content */}
+
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#e0784b]">
             Plan Your Journey
@@ -84,38 +142,41 @@ export default function InquiryForm({
           </h2>
 
           <p className="mt-6 max-w-lg text-lg leading-relaxed text-white/60">
-            Tell us about your travel plans and we&apos;ll help you take the
-            next step towards your journey to{" "}
+            Tell us about your travel plans and
+            we&apos;ll help you take the next step
+            towards your journey to{" "}
             {destinationName || "India"}.
           </p>
         </div>
 
         {/* Form */}
+
         <div className="rounded-[32px] bg-white p-6 text-[#211c17] sm:p-10">
           {!submitted ? (
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-5"
+            >
               {/* Name */}
-           <div>
-            <label className="mb-2 block text-sm font-medium">
-                Destination
-            </label>
 
-            <input
-                type="text"
-                name="destination"
-                value={formData.destination}
-                onChange={handleChange}
-                readOnly={!allowDestinationEdit}
-                placeholder="Where would you like to go?"
-                className={`w-full rounded-xl border border-[#ded6cc] px-4 py-3 outline-none focus:border-[#c85a2b] ${
-                !allowDestinationEdit
-                    ? "cursor-not-allowed bg-[#f3eee6] text-[#756b63]"
-                    : "bg-white"
-                }`}
-            />
-            </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium">
+                  Full Name
+                </label>
+
+                <input
+                  required
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Enter your name"
+                  className="w-full rounded-xl border border-[#ded6cc] px-4 py-3 outline-none focus:border-[#c85a2b]"
+                />
+              </div>
 
               {/* Email */}
+
               <div>
                 <label className="mb-2 block text-sm font-medium">
                   Email Address
@@ -133,12 +194,14 @@ export default function InquiryForm({
               </div>
 
               {/* Phone */}
+
               <div>
                 <label className="mb-2 block text-sm font-medium">
                   Phone Number
                 </label>
 
                 <input
+                  required
                   type="tel"
                   name="phone"
                   value={formData.phone}
@@ -149,6 +212,7 @@ export default function InquiryForm({
               </div>
 
               {/* Destination */}
+
               <div>
                 <label className="mb-2 block text-sm font-medium">
                   Destination
@@ -158,12 +222,19 @@ export default function InquiryForm({
                   type="text"
                   name="destination"
                   value={formData.destination}
-                  readOnly
-                  className="w-full cursor-not-allowed rounded-xl border border-[#ded6cc] bg-[#f3eee6] px-4 py-3 text-[#756b63]"
+                  onChange={handleChange}
+                  readOnly={!allowDestinationEdit}
+                  placeholder="Where would you like to go?"
+                  className={`w-full rounded-xl border border-[#ded6cc] px-4 py-3 outline-none focus:border-[#c85a2b] ${
+                    !allowDestinationEdit
+                      ? "cursor-not-allowed bg-[#f3eee6] text-[#756b63]"
+                      : "bg-white"
+                  }`}
                 />
               </div>
 
               {/* Travel Date */}
+
               <div>
                 <label className="mb-2 block text-sm font-medium">
                   Travel Date
@@ -179,6 +250,7 @@ export default function InquiryForm({
               </div>
 
               {/* Travellers */}
+
               <div>
                 <label className="mb-2 block text-sm font-medium">
                   Number of Travellers
@@ -196,6 +268,7 @@ export default function InquiryForm({
               </div>
 
               {/* Message */}
+
               <div>
                 <label className="mb-2 block text-sm font-medium">
                   Tell us about your trip
@@ -207,24 +280,40 @@ export default function InquiryForm({
                   value={formData.message}
                   onChange={handleChange}
                   placeholder={`Tell us about your trip to ${
-                    destinationName || "India"
+                    formData.destination || "India"
                   }...`}
                   className="w-full resize-none rounded-xl border border-[#ded6cc] px-4 py-3 outline-none focus:border-[#c85a2b]"
                 />
               </div>
 
+              {/* Error */}
+
+              {error && (
+                <p className="text-sm text-red-500">
+                  {error}
+                </p>
+              )}
+
               {/* Submit */}
+
               <button
                 type="submit"
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-[#c85a2b] px-6 py-4 font-semibold text-white transition hover:bg-[#a94720]"
+                disabled={loading}
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-[#c85a2b] px-6 py-4 font-semibold text-white transition hover:bg-[#a94720] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Send Inquiry
+                {loading
+                  ? "Sending Inquiry..."
+                  : "Send Inquiry"}
+
                 <Send size={18} />
               </button>
             </form>
           ) : (
             <div className="flex min-h-[500px] flex-col items-center justify-center text-center">
-              <CheckCircle2 size={60} className="text-[#c85a2b]" />
+              <CheckCircle2
+                size={60}
+                className="text-[#c85a2b]"
+              />
 
               <h3 className="mt-6 font-serif text-4xl">
                 Inquiry Received!
@@ -232,12 +321,13 @@ export default function InquiryForm({
 
               <p className="mt-4 max-w-md text-[#756b63]">
                 Thank you for your interest in{" "}
-                {destinationName || "India"}. We&apos;ll get back to you soon.
+                {formData.destination || "India"}.
+                We&apos;ll get back to you soon.
               </p>
 
               <button
                 type="button"
-                onClick={() => setSubmitted(false)}
+                onClick={handleSendAnotherInquiry}
                 className="mt-8 rounded-full border border-[#c85a2b] px-6 py-3 text-sm font-semibold text-[#c85a2b]"
               >
                 Send Another Inquiry
