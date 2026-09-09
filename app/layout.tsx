@@ -2,17 +2,18 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("http://localhost:3001"),
+  metadataBase: new URL("https://travelgency.in"),
 
   title: {
-    default: "TravelBhakt | Discover Incredible India",
-    template: "%s | TravelBhakt",
+    default: "Travel Bhakt | Discover Incredible India",
+    template: "%s | Travel Bhakt",
   },
 
   description:
-    "Discover incredible destinations, travel packages, guides and experiences across India with TravelBhakt.",
+    "Discover incredible destinations, travel packages, guides and experiences across India with Travel Bhakt.",
 
   keywords: [
+    "Travel Bhakt",
     "TravelBhakt",
     "India travel",
     "Northeast India travel",
@@ -22,38 +23,43 @@ export const metadata: Metadata = {
     "Meghalaya travel",
     "Tawang travel",
     "Kaziranga travel",
+    "Assam travel",
     "India travel guide",
   ],
 
   authors: [
     {
-      name: "TravelBhakt",
+      name: "Travel Bhakt",
     },
   ],
 
-  creator: "TravelBhakt",
+  creator: "Travel Bhakt",
 
-  publisher: "TravelBhakt",
+  publisher: "Travel Bhakt",
+
+  alternates: {
+    canonical: "/",
+  },
 
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "http://localhost:3001",
-    siteName: "TravelBhakt",
+    url: "https://travelgency.in",
+    siteName: "Travel Bhakt",
 
-    title: "TravelBhakt | Discover Incredible India",
+    title: "Travel Bhakt | Discover Incredible India",
 
     description:
-      "Discover incredible destinations, travel packages and stories across India.",
+      "Discover incredible destinations, travel packages and stories across India with Travel Bhakt.",
   },
 
   twitter: {
     card: "summary_large_image",
 
-    title: "TravelBhakt | Discover Incredible India",
+    title: "Travel Bhakt | Discover Incredible India",
 
     description:
-      "Discover incredible destinations, travel packages and stories across India.",
+      "Discover incredible destinations, travel packages and stories across India with Travel Bhakt.",
   },
 
   robots: {
