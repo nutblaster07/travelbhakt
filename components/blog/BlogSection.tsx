@@ -27,6 +27,10 @@ type Blog = {
   updatedAt: string;
 };
 
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://travelbhakt-backend-production.up.railway.app";
+
 export default function BlogSection() {
   const [blogs, setBlogs] =
     useState<Blog[]>([]);
@@ -42,6 +46,9 @@ export default function BlogSection() {
 
   const isInteracting =
     useRef(false);
+    const API_URL =
+      process.env.NEXT_PUBLIC_API_URL ||
+      "https://travelbhakt-backend-production.up.railway.app";
 
   /*
   =====================================================
@@ -55,38 +62,61 @@ export default function BlogSection() {
         setLoading(true);
         setError("");
 
+        console.log(
+          "Blogs API URL:",
+          API_URL
+        );
+
         const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/blogs`
-       );
+          `${API_URL}/blogs`,
+          {
+            cache: "no-store",
+          }
+        );
 
         if (!response.ok) {
           throw new Error(
-            "Failed to load blogs"
+            `Failed to load blogs: ${response.status}`
           );
         }
 
-        const data: Blog[] =
-          await response.json();
+        const data = await response.json();
 
-        /*
-        Only show published blogs
-        */
+        if (!Array.isArray(data)) {
+          throw new Error(
+            "Invalid blogs response"
+          );
+        }
 
         const publishedBlogs =
           data.filter(
-            (blog) =>
+            (blog: Blog) =>
               blog.isPublished === true
           );
 
         /*
-        Show latest 6 blogs
+        Sort newest first
         */
 
-        setBlogs(
-          publishedBlogs.slice(0, 6)
-        );
+        const latestBlogs =
+          publishedBlogs
+            .sort(
+              (a: Blog, b: Blog) =>
+                new Date(
+                  b.createdAt
+                ).getTime() -
+                new Date(
+                  a.createdAt
+                ).getTime()
+            )
+            .slice(0, 6);
+
+        setBlogs(latestBlogs);
       } catch (error) {
-        console.error(error);
+        console.error(
+          "Error fetching blogs:",
+          error
+        );
 
         setError(
           "Unable to load travel stories."
@@ -109,10 +139,17 @@ export default function BlogSection() {
     const container =
       scrollRef.current;
 
-    if (!container) return;
+    if (
+      !container ||
+      blogs.length <= 1
+    ) {
+      return;
+    }
 
     const interval = setInterval(() => {
-      if (isInteracting.current) return;
+      if (isInteracting.current) {
+        return;
+      }
 
       const isAtEnd =
         container.scrollLeft +
@@ -127,7 +164,8 @@ export default function BlogSection() {
       } else {
         container.scrollBy({
           left:
-            container.clientWidth * 0.85,
+            container.clientWidth *
+            0.85,
           behavior: "smooth",
         });
       }
@@ -135,7 +173,21 @@ export default function BlogSection() {
 
     return () =>
       clearInterval(interval);
-  }, [blogs]);
+  }, [blogs.length]);
+
+  /*
+  =====================================================
+  PAUSE AUTO SCROLL
+  =====================================================
+  */
+
+  const pauseAutoScroll = () => {
+    isInteracting.current = true;
+
+    setTimeout(() => {
+      isInteracting.current = false;
+    }, 3000);
+  };
 
   /*
   =====================================================
@@ -149,20 +201,26 @@ export default function BlogSection() {
 
     if (!container) return;
 
-    isInteracting.current = true;
+    pauseAutoScroll();
 
-    container.scrollBy({
-      left:
-        -(
-          container.clientWidth *
-          0.85
-        ),
-      behavior: "smooth",
-    });
+    const isAtStart =
+      container.scrollLeft <= 10;
 
-    setTimeout(() => {
-      isInteracting.current = false;
-    }, 3000);
+    if (isAtStart) {
+      container.scrollTo({
+        left: container.scrollWidth,
+        behavior: "smooth",
+      });
+    } else {
+      container.scrollBy({
+        left:
+          -(
+            container.clientWidth *
+            0.85
+          ),
+        behavior: "smooth",
+      });
+    }
   };
 
   /*
@@ -177,7 +235,7 @@ export default function BlogSection() {
 
     if (!container) return;
 
-    isInteracting.current = true;
+    pauseAutoScroll();
 
     const isAtEnd =
       container.scrollLeft +
@@ -197,10 +255,6 @@ export default function BlogSection() {
         behavior: "smooth",
       });
     }
-
-    setTimeout(() => {
-      isInteracting.current = false;
-    }, 3000);
   };
 
   /*
@@ -212,8 +266,15 @@ export default function BlogSection() {
   function getReadTime(
     content: string
   ) {
+    if (!content) {
+      return "1 min read";
+    }
+
     const words =
-      content.trim().split(/\s+/).length;
+      content
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean).length;
 
     const minutes =
       Math.max(
@@ -231,9 +292,7 @@ export default function BlogSection() {
     >
       <div className="mx-auto max-w-[1440px]">
 
-        {/* =====================================================
-            HEADING
-        ===================================================== */}
+        {/* HEADING */}
 
         <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
 
@@ -269,8 +328,6 @@ export default function BlogSection() {
               />
             </Link>
 
-            {/* Navigation */}
-
             {blogs.length > 1 && (
               <div className="flex gap-3">
 
@@ -297,23 +354,17 @@ export default function BlogSection() {
 
         </div>
 
-        {/* =====================================================
-            LOADING
-        ===================================================== */}
+        {/* LOADING */}
 
         {loading && (
           <div className="flex justify-center py-16">
-
             <div className="text-[#756b63]">
               Loading travel stories...
             </div>
-
           </div>
         )}
 
-        {/* =====================================================
-            ERROR
-        ===================================================== */}
+        {/* ERROR */}
 
         {!loading && error && (
           <div className="rounded-3xl bg-white p-10 text-center">
@@ -330,9 +381,7 @@ export default function BlogSection() {
           </div>
         )}
 
-        {/* =====================================================
-            EMPTY STATE
-        ===================================================== */}
+        {/* EMPTY STATE */}
 
         {!loading &&
           !error &&
@@ -356,9 +405,7 @@ export default function BlogSection() {
             </div>
           )}
 
-        {/* =====================================================
-            BLOG CAROUSEL
-        ===================================================== */}
+        {/* BLOG CAROUSEL */}
 
         {!loading &&
           !error &&
@@ -390,16 +437,14 @@ export default function BlogSection() {
                   className="group w-[85vw] shrink-0 snap-start overflow-hidden rounded-3xl bg-white transition duration-300 hover:-translate-y-2 hover:shadow-xl sm:w-[60vw] lg:w-[420px]"
                 >
 
-                  {/* Image */}
+                  {/* IMAGE */}
 
                   <div className="relative h-[260px] overflow-hidden">
 
                     {blog.coverImage ? (
 
                       <img
-                        src={
-                          blog.coverImage
-                        }
+                        src={blog.coverImage}
                         alt={blog.title}
                         className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
                       />
@@ -417,7 +462,7 @@ export default function BlogSection() {
 
                     )}
 
-                    {/* Category */}
+                    {/* CATEGORY */}
 
                     {blog.category && (
 
@@ -431,7 +476,7 @@ export default function BlogSection() {
 
                   </div>
 
-                  {/* Content */}
+                  {/* CONTENT */}
 
                   <div className="p-7">
 
