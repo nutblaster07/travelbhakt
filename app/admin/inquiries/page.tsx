@@ -39,8 +39,24 @@ export default function AdminInquiriesPage() {
         setLoading(true);
         setError("");
 
+        const token = localStorage.getItem(
+        "accessToken"
+        );
+
+        if (!token) {
+        throw new Error(
+            "You are not logged in. Please login again."
+        );
+        }
+
         const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/inquiries`
+        `${process.env.NEXT_PUBLIC_API_URL}/inquiries`,
+        {
+            headers: {
+            Authorization: `Bearer ${token}`,
+            },
+            cache: "no-store",
+        }
         );
 
         if (!response.ok) {
