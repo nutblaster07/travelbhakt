@@ -23,39 +23,50 @@ export default function PackagesSection() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  useEffect(() => {
-    const fetchPackages = async () => {
-      try {
-        const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/packages`
+ useEffect(() => {
+  const fetchPackages = async () => {
+    try {
+      const API_URL =
+        process.env.NEXT_PUBLIC_API_URL ||
+        "https://travelbhakt-backend-production.up.railway.app";
+
+      console.log("Packages API URL:", API_URL);
+
+      const response = await fetch(
+        `${API_URL}/packages`,
+        {
+          cache: "no-store",
+        }
       );
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch packages");
-        }
-
-        const data: BackendPackage[] =
-          await response.json();
-
-        const publishedPackages = data.filter(
-          (item) => item.isPublished
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch packages: ${response.status}`
         );
-
-        setPackages(publishedPackages);
-      } catch (error) {
-        console.error(
-          "Error fetching packages:",
-          error
-        );
-
-        setError(true);
-      } finally {
-        setLoading(false);
       }
-    };
 
-    fetchPackages();
-  }, []);
+      const data: BackendPackage[] =
+        await response.json();
+
+      const publishedPackages = data.filter(
+        (item) => item.isPublished
+      );
+
+      setPackages(publishedPackages);
+    } catch (error) {
+      console.error(
+        "Error fetching packages:",
+        error
+      );
+
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchPackages();
+}, []);
 
   const formatPackage = (
     item: BackendPackage
